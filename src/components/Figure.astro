@@ -1,0 +1,31 @@
+---
+/**
+ * A figure slot.
+ *
+ * `src` with an extension  -> used as-is.
+ * `src` without one        -> treated as a base name and rendered as a
+ *                             <picture> with "-dark.png" / "-light.png",
+ *                             so generated plots match the viewer's theme.
+ *                             This is what scripts/make_figures.py emits.
+ * no `src`                 -> a labelled placeholder box.
+ */
+interface Props {
+  src?: string;
+  alt?: string;
+  note?: string;
+}
+const { src, alt, note = 'Figure pending' } = Astro.props as Props;
+const hasExt = !!src && /\.(png|jpe?g|webp|avif|svg|gif)$/i.test(src);
+---
+<div class="figure">
+  {src && hasExt && (
+    <img src={src} alt={alt ?? ''} loading="lazy" decoding="async" />
+  )}
+  {src && !hasExt && (
+    <picture>
+      <source srcset={`${src}-dark.png`} media="(prefers-color-scheme: dark)" />
+      <img src={`${src}-light.png`} alt={alt ?? ''} loading="lazy" decoding="async" />
+    </picture>
+  )}
+  {!src && <p class="placeholder">{note}</p>}
+</div>

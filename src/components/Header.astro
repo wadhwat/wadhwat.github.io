@@ -1,0 +1,19 @@
+---
+import { SITE, NAV } from '../consts';
+const path = Astro.url.pathname;
+const isCurrent = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href.replace(/\/$/, ''));
+---
+<header class="site-header">
+  <div class="wrap inner">
+    <a class="wordmark" href="/">{SITE.name}</a>
+    <nav class="site-nav" aria-label="Main">
+      {NAV.map((item) => (
+        <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))}
+      <a href={`mailto:${SITE.email}`}>Email</a>
+    </nav>
+  </div>
+</header>

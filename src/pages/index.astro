@@ -1,0 +1,127 @@
+---
+import Base from '../layouts/Base.astro';
+import Stats from '../components/Stats.astro';
+import Figure from '../components/Figure.astro';
+import { SITE, AFFILIATIONS, CURRENT_UPDATED } from '../consts';
+import { getCollection } from 'astro:content';
+
+const all = (await getCollection('projects', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const selected = all.filter((p) => p.data.tier === 'selected');
+const current = all.filter((p) => p.data.tier === 'current');
+const also = all.filter((p) => p.data.tier === 'also');
+---
+<Base bare>
+  <section class="wrap statement">
+    <p class="whoami">{SITE.name} · Computer Engineering, Purdue</p>
+    <h1>I build systems that cross the hardware&#8211;software line.</h1>
+    <p class="sub">
+      Real-time DSP on FPGAs, embedded firmware, PCB design, and the software that sits
+      on top; usually in the same project. Graduating {SITE.gradDate}.
+    </p>
+
+    <dl class="affils">
+      {AFFILIATIONS.map((a) => (
+        <div class="affil">
+          <dt>{a.label}</dt>
+          <dd>{a.value}</dd>
+        </div>
+      ))}
+    </dl>
+
+    <div class="inline-links">
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      <a href={SITE.github}>GitHub</a>
+      <a href={SITE.linkedin}>LinkedIn</a>
+    </div>
+  </section>
+
+  {current.length > 0 && (
+    <section class="wrap section">
+      <div class="section-head">
+        <h2>Currently building</h2>
+        <span class="meta">Updated {CURRENT_UPDATED}</span>
+      </div>
+      <div class="current">
+        {current.map((p) => (
+          <article class="current-item">
+            <div class="where">{p.data.where ?? p.data.categories[0]}</div>
+            <div>
+              <h3><a href={`/projects/${p.id}/`}>{p.data.title}</a></h3>
+              <p>{p.data.hook}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="wrap section">
+    <div class="section-head">
+      <h2>Selected work</h2>
+      <a href="/projects/">All projects &#8594;</a>
+    </div>
+    <div class="features">
+      {selected.map((p, i) => (
+        <article class="feature" data-flip={i % 2 === 1 ? 'true' : 'false'}>
+          <Figure src={p.data.figure} alt={p.data.figureAlt} note={p.data.figureNote} />
+          <div>
+            <p class="eyebrow">{p.data.categories.join(' · ')}</p>
+            <h3><a href={`/projects/${p.id}/`}>{p.data.title}</a></h3>
+            <p class="hook">{p.data.hook}</p>
+            <Stats stats={p.data.stats} />
+            <a class="more" href={`/projects/${p.id}/`}>Read the write-up &#8594;</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  {also.length > 0 && (
+    <section class="wrap section">
+      <div class="section-head">
+        <h2>Also built</h2>
+      </div>
+      <div class="compact">
+        {also.map((p) => (
+          <article class="compact-item">
+            <div class="where">{p.data.where ?? p.data.categories[0]}</div>
+            <div>
+              <h3><a href={`/projects/${p.id}/`}>{p.data.title}</a></h3>
+              <p>{p.data.hook}</p>
+            </div>
+            <span class="badge">{p.data.dates}</span>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="wrap section">
+    <div class="section-head">
+      <h2>What I work in</h2>
+    </div>
+    <div class="stack">
+      <div class="stack-line">
+        <div class="k">Hardware</div>
+        <div class="v">
+          SystemVerilog<span class="sep">·</span>RTL design &amp; simulation<span class="sep">·</span>FPGA
+          bring-up<span class="sep">·</span><span class="todo">TODO: Vivado / Quartus</span><span class="sep">·</span>schematic
+          capture &amp; PCB layout in <span class="todo">TODO: EDA tool</span>
+        </div>
+      </div>
+      <div class="stack-line">
+        <div class="k">Software</div>
+        <div class="v">C<span class="sep">·</span>Python<span class="sep">·</span>Java<span class="sep">·</span>CUDA</div>
+      </div>
+      <div class="stack-line">
+        <div class="k">Domains</div>
+        <div class="v">
+          Real-time DSP<span class="sep">·</span>computer architecture<span class="sep">·</span>embedded
+          firmware<span class="sep">·</span>agent systems
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

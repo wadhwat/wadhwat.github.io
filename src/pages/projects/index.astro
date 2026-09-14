@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import Stats from '../../components/Stats.astro';
+import Figure from '../../components/Figure.astro';
+import { getCollection } from 'astro:content';
+
+const all = (await getCollection('projects', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const groups = [
+  { key: 'selected', title: 'Finished work', items: all.filter((p) => p.data.tier === 'selected') },
+  { key: 'current', title: 'In progress', items: all.filter((p) => p.data.tier === 'current') },
+  { key: 'also', title: 'Smaller projects', items: all.filter((p) => p.data.tier === 'also') },
+].filter((g) => g.items.length > 0);
+---
+<Base
+  title="Projects"
+  description="FPGA, DSP, embedded and PCB projects, written up with the constraints, the decisions, and the numbers."
+>
+  <section class="wrap page-head">
+    <h1>Projects</h1>
+    <p class="dek">
+      Grouped by how far along each one is. The finished two carry the architecture, the
+      decisions, the bug that cost the most time, and the measured numbers.
+    </p>
+  </section>
+
+  <div class="wrap page-body">
+    {groups.map((g) => (
+      <section class="group">
+        <h2>{g.title}</h2>
+        <div class="features">
+          {g.items.map((p, i) => (
+            <article class="feature" data-flip={i % 2 === 1 ? 'true' : 'false'}>
+              <Figure src={p.data.figure} alt={p.data.figureAlt} note={p.data.figureNote} />
+              <div>
+                <p class="eyebrow">{p.data.categories.join(' · ')} &#183; {p.data.dates}</p>
+                <h3><a href={`/projects/${p.id}/`}>{p.data.title}</a></h3>
+                <p class="hook">{p.data.hook}</p>
+                <Stats stats={p.data.stats} />
+                <a class="more" href={`/projects/${p.id}/`}>Read the write-up &#8594;</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</Base>

@@ -1,0 +1,84 @@
+---
+import Base from '../../layouts/Base.astro';
+import Figure from '../../components/Figure.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const d = project.data;
+const { Content } = await render(project);
+---
+<Base title={d.title} description={d.hook}>
+  <section class="wrap case-head">
+    <p class="label">{d.categories.join(' · ')}</p>
+    <h1>{d.title}</h1>
+    <p class="hook">{d.hook}</p>
+  </section>
+
+  <div class="wrap case-body">
+    <aside class="case-aside">
+      <div class="inner">
+        {(d.figure || d.figureNote) && (
+          <Figure src={d.figure} alt={d.figureAlt} note={d.figureNote} />
+        )}
+        <dl class="aside-block">
+          <dt>Dates</dt>
+          <dd>{d.dates}</dd>
+        </dl>
+        {d.where && (
+          <dl class="aside-block">
+            <dt>Through</dt>
+            <dd class="plain">{d.where}</dd>
+          </dl>
+        )}
+        <dl class="aside-block">
+          <dt>My role</dt>
+          <dd class="plain">{d.role}</dd>
+        </dl>
+        <dl class="aside-block">
+          <dt>Status</dt>
+          <dd>{d.status.replace('-', ' ')}</dd>
+        </dl>
+        {d.links.length > 0 && (
+          <div class="aside-block">
+            <dt>Links</dt>
+            <div class="aside-links">
+              {d.links.map((l) => <a href={l.href}>{l.label} &#8599;</a>)}
+            </div>
+          </div>
+        )}
+      </div>
+    </aside>
+
+    <div class="case-main">
+      <article class="prose">
+        <Content />
+
+        {d.results.length > 0 && (
+          <>
+            <h2>Results</h2>
+            <div class="results-wrap">
+              <table class="results">
+                <thead>
+                  <tr><th scope="col">Metric</th><th scope="col">Measured</th></tr>
+                </thead>
+                <tbody>
+                  {d.results.map((r) => (
+                    <tr><td>{r.metric}</td><td>{r.value}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </article>
+    </div>
+  </div>
+</Base>

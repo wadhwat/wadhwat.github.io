@@ -1,0 +1,15 @@
+---
+interface Stat { label: string; value: string; todo?: boolean }
+interface Props { stats: Stat[] }
+const { stats } = Astro.props as Props;
+---
+{stats.length > 0 && (
+  <dl class="stats">
+    {stats.map((s) => (
+      <div class="stat">
+        <dt>{s.label}</dt>
+        <dd class={s.todo ? 'todo' : undefined}>{s.value}</dd>
+      </div>
+    ))}
+  </dl>
+)}

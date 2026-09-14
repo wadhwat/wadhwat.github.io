@@ -1,0 +1,14 @@
+---
+import { SITE } from '../consts';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap inner">
+    <div class="links">
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      <a href={SITE.github} rel="me">GitHub</a>
+      <a href={SITE.linkedin} rel="me">LinkedIn</a>
+    </div>
+    <p class="colophon">© {year} {SITE.name} · Astro, on GitHub Pages</p>
+  </div>
+</footer>
