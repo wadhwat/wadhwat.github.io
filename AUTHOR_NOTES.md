@@ -1,6 +1,6 @@
 # Portfolio writing workbook
 
-This private workbook is not loaded by the website. The public pages use facts verified
+This working file is not loaded by the website. The public pages use facts verified
 from repositories, commit history, project documentation, and the current resume as of
 September 14, 2026.
 
