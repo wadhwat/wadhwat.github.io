@@ -29,10 +29,19 @@ const also = all.filter((p) => p.data.tier === 'also');
       ))}
     </dl>
 
-    <div class="inline-links">
-      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-      <a href={SITE.github}>GitHub</a>
-      <a href={SITE.linkedin}>LinkedIn</a>
+    <div class="statement-contact">
+      <img
+        class="home-headshot"
+        src="/images/headshot.webp"
+        alt="Tejas Wadhwa"
+        width="72"
+        height="72"
+      />
+      <div class="inline-links">
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        <a href={SITE.github}>GitHub</a>
+        <a href={SITE.linkedin}>LinkedIn</a>
+      </div>
     </div>
   </section>
 
@@ -52,7 +61,7 @@ const also = all.filter((p) => p.data.tier === 'also');
 
   <section class="wrap section">
     <div class="section-head">
-      <h2>Selected work</h2>
+      <h2>Selected projects</h2>
       <a href="/projects/">All projects &#8594;</a>
     </div>
     <div class="project-grid">

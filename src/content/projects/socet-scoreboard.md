@@ -8,6 +8,8 @@ where: SoCET
 categories: ['RTL & FPGA', 'PCB Design']
 dates: 'Jan 2026 – May 2026'
 role: 'Led a five-person team and contributed the top-level integration, control FSM, verification, and custom-board design and bring-up.'
+figure: '/images/scoreboard-render.webp'
+figureAlt: 'KiCad 3D render of the custom basketball scoreboard interface PCB'
 stats:
   - { label: 'FPGA board', value: 'Arty S7-25' }
   - { label: 'PCB', value: '2 layers' }
@@ -42,3 +44,15 @@ board.
 The board is a two-layer, 1.6 mm FR-4 design with 45 placed footprints and a roughly
 94 × 98 mm outline. The repository includes the FPGA constraints, RTL, testbenches,
 schematics, layout, and hardware bring-up programs.
+
+## Layout and verification
+
+<figure class="project-media">
+  <img src="/images/scoreboard-layout.webp" alt="Routed two-layer scoreboard PCB in KiCad" loading="lazy" />
+  <figcaption>The routed two-layer board, including the display, button, buzzer, and FPGA-interface sections.</figcaption>
+</figure>
+
+<figure class="project-media">
+  <img src="/images/scoreboard-waveform.webp" alt="Vivado simulation waveform for scoreboard controls and display outputs" loading="lazy" />
+  <figcaption>A top-level simulation exercising control inputs, possession state, display selection, and segment outputs.</figcaption>
+</figure>

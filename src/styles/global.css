@@ -148,6 +148,11 @@ h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
   display: flex; flex-wrap: wrap; gap: 10px 20px;
   font-family: var(--f-mono); font-size: 13px;
 }
+.statement-contact { display: flex; align-items: center; gap: 18px; }
+.home-headshot {
+  width: 66px; height: 66px; border-radius: 50%; object-fit: cover;
+  object-position: 50% 59%; border: 1px solid var(--rule-2); flex: 0 0 auto;
+}
 
 /* ========================= sections ========================= */
 
@@ -415,6 +420,26 @@ table.results tbody tr:last-child td { border-bottom: 0; }
 .page-head h1 { font-family: var(--f-display); font-weight: 400; font-size: var(--fs-3xl); line-height: 1.0; }
 .page-head .dek { font-size: var(--fs-lg); color: var(--ink-2); max-width: 56ch; margin: 14px 0 0; }
 .page-body { padding-top: 28px; }
+.about-layout {
+  display: grid; grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
+  gap: clamp(30px, 6vw, 76px); align-items: start;
+}
+.about-photo {
+  width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: 50% 58%;
+  border: 1px solid var(--rule);
+}
+.project-media { margin: 24px 0 30px; }
+.project-media img {
+  display: block; width: 100%; height: auto; border: 1px solid var(--rule);
+  background: var(--card);
+}
+.project-media figcaption {
+  color: var(--ink-3); font: 11px/1.5 var(--f-mono); margin-top: 8px;
+}
+@media (max-width: 700px) {
+  .about-layout { grid-template-columns: 1fr; }
+  .about-photo { width: min(76vw, 330px); }
+}
 
 .group { padding-top: 34px; }
 .group > h2 {

@@ -8,9 +8,9 @@ const all = (await getCollection('projects', ({ data }) => !data.draft)).sort(
 );
 
 const groups = [
-  { key: 'selected', title: 'Finished work', items: all.filter((p) => p.data.tier === 'selected') },
+  { key: 'selected', title: 'Selected projects', items: all.filter((p) => p.data.tier === 'selected') },
   { key: 'current', title: 'In progress', items: all.filter((p) => p.data.tier === 'current') },
-  { key: 'also', title: 'Smaller projects', items: all.filter((p) => p.data.tier === 'also') },
+  { key: 'also', title: 'Also built', items: all.filter((p) => p.data.tier === 'also') },
 ].filter((g) => g.items.length > 0);
 ---
 <Base
@@ -20,7 +20,8 @@ const groups = [
   <section class="wrap page-head">
     <h1>Projects</h1>
     <p class="dek">
-      Concise, source-grounded briefs now; longer first-person articles will follow as I write them.
+      Selected RTL, FPGA, embedded, PCB, and software systems, with the engineering details
+      that shaped each build.
     </p>
   </section>
 

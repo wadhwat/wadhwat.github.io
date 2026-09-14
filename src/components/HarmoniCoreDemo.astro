@@ -8,11 +8,14 @@
       RTL.
     </p>
     <div class="hc-control">
-      <label for="carrier">Carrier rate <output id="carrier-value">6.0×</output></label>
-      <input id="carrier" type="range" min="1" max="14" value="6" step="0.5" />
+      <label for="carrier">Carrier frequency <output id="carrier-value">220 Hz</output></label>
+      <input id="carrier" type="range" min="40" max="800" value="220" step="10" />
     </div>
-    <button class="hc-pause" id="hc-pause" type="button">Pause motion</button>
-    <a class="more" href="/projects/harmonicore/">See the RTL and verification &#8594;</a>
+    <div class="hc-actions">
+      <button class="hc-button" id="hc-audio" type="button">Play audio</button>
+      <button class="hc-button" id="hc-pause" type="button">Pause motion</button>
+      <a class="more" href="/projects/harmonicore/">See the RTL and verification &#8594;</a>
+    </div>
   </div>
 
   <div class="hc-scope">
@@ -31,7 +34,7 @@
       </svg>
     </div>
     <p class="hc-caption">
-      Browser model of the RTL arithmetic · 24-bit Q1.23 · 64-entry quarter-wave sine ROM
+      Generated tone through the RTL arithmetic model · 24-bit Q1.23 · volume kept low
     </p>
   </div>
 </section>
@@ -42,17 +45,21 @@
   const inputPath = document.querySelector('#hc-input-wave');
   const outputPath = document.querySelector('#hc-output-wave');
   const pause = document.querySelector('#hc-pause');
+  const audio = document.querySelector('#hc-audio');
 
   if (
     carrier instanceof HTMLInputElement &&
     carrierValue instanceof HTMLOutputElement &&
     inputPath instanceof SVGPathElement &&
     outputPath instanceof SVGPathElement &&
-    pause instanceof HTMLButtonElement
+    pause instanceof HTMLButtonElement &&
+    audio instanceof HTMLButtonElement
   ) {
     let running = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let phase = 0;
     let frame = 0;
+    let audioContext: AudioContext | null = null;
+    let audioSource: AudioBufferSourceNode | null = null;
 
     const q23 = (value) => {
       const max = 1 - 2 ** -23;
@@ -83,17 +90,69 @@
     };
 
     const draw = () => {
-      const rate = Number(carrier.value);
-      carrierValue.value = `${rate.toFixed(1)}×`;
-      const source = (t) =>
-        0.62 * Math.sin(2 * Math.PI * (2 * t + phase)) +
-        0.22 * Math.sin(2 * Math.PI * (4 * t + phase * 0.7)) +
-        0.08 * Math.sin(2 * Math.PI * (7 * t));
+      const carrierHz = Number(carrier.value);
+      const windowSeconds = 0.025;
+      carrierValue.value = `${carrierHz.toFixed(0)} Hz`;
+      const source = (t) => {
+        const seconds = t * windowSeconds;
+        return (
+          0.5 * Math.sin(2 * Math.PI * 110 * seconds + phase) +
+          0.2 * Math.sin(2 * Math.PI * 220 * seconds + phase * 0.7) +
+          0.1 * Math.sin(2 * Math.PI * 330 * seconds)
+        );
+      };
       inputPath.setAttribute('d', pathFor(source));
       outputPath.setAttribute(
         'd',
-        pathFor((t) => q23(source(t) * q23Sine(rate * t + phase)))
+        pathFor((t) =>
+          q23(q23(source(t)) * q23Sine(carrierHz * t * windowSeconds + phase / (2 * Math.PI)))
+        )
       );
+    };
+
+    const stopAudio = () => {
+      if (audioSource) {
+        audioSource.stop();
+        audioSource.disconnect();
+        audioSource = null;
+      }
+      audio.textContent = 'Play audio';
+      audio.setAttribute('aria-pressed', 'false');
+    };
+
+    const startAudio = async () => {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return;
+      audioContext ||= new AudioContextClass();
+      await audioContext.resume();
+      if (audioSource) {
+        audioSource.stop();
+        audioSource.disconnect();
+      }
+
+      const duration = 2;
+      const sampleRate = audioContext.sampleRate;
+      const buffer = audioContext.createBuffer(1, duration * sampleRate, sampleRate);
+      const samples = buffer.getChannelData(0);
+      const carrierHz = Number(carrier.value);
+      for (let i = 0; i < samples.length; i += 1) {
+        const seconds = i / sampleRate;
+        const input =
+          0.5 * Math.sin(2 * Math.PI * 110 * seconds) +
+          0.2 * Math.sin(2 * Math.PI * 220 * seconds) +
+          0.1 * Math.sin(2 * Math.PI * 330 * seconds);
+        samples[i] = 0.18 * q23(q23(input) * q23Sine(carrierHz * seconds));
+      }
+
+      const gain = audioContext.createGain();
+      gain.gain.value = 1;
+      audioSource = audioContext.createBufferSource();
+      audioSource.buffer = buffer;
+      audioSource.loop = true;
+      audioSource.connect(gain).connect(audioContext.destination);
+      audioSource.start();
+      audio.textContent = 'Stop audio';
+      audio.setAttribute('aria-pressed', 'true');
     };
 
     const tick = () => {
@@ -102,7 +161,14 @@
       frame = window.requestAnimationFrame(tick);
     };
 
-    carrier.addEventListener('input', draw);
+    carrier.addEventListener('input', () => {
+      draw();
+      if (audioSource) void startAudio();
+    });
+    audio.addEventListener('click', () => {
+      if (audioSource) stopAudio();
+      else void startAudio();
+    });
     pause.addEventListener('click', () => {
       running = !running;
       pause.textContent = running ? 'Pause motion' : 'Resume motion';
@@ -110,7 +176,9 @@
       draw();
     });
     pause.setAttribute('aria-pressed', String(!running));
+    audio.setAttribute('aria-pressed', 'false');
     if (!running) pause.textContent = 'Resume motion';
+    window.addEventListener('pagehide', stopAudio, { once: true });
     tick();
   }
 </script>
@@ -150,16 +218,21 @@
   }
   .hc-control output { color: var(--accent-ink); }
   .hc-control input { width: 100%; accent-color: var(--accent); }
-  .hc-pause {
+  .hc-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+  .hc-button {
     border: 1px solid var(--rule-2);
     background: transparent;
     color: var(--ink-2);
     padding: 7px 10px;
     font: 11px var(--f-mono);
     cursor: pointer;
-    margin-right: 13px;
   }
-  .hc-pause:hover { border-color: var(--accent); color: var(--accent-ink); }
+  .hc-button:hover { border-color: var(--accent); color: var(--accent-ink); }
   .hc-demo .more { display: inline-block; font-family: var(--f-mono); font-size: 11px; }
   .hc-scope {
     min-width: 0;

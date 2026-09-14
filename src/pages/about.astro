@@ -10,7 +10,14 @@ import { SITE } from '../consts';
     <h1>About</h1>
   </section>
 
-  <div class="wrap page-body">
+  <div class="wrap page-body about-layout">
+    <img
+      class="about-photo"
+      src="/images/headshot.webp"
+      alt="Tejas Wadhwa by a lake"
+      width="1200"
+      height="1600"
+    />
     <article class="prose">
       <p>
         I&#8217;m a Computer Engineering student at Purdue, graduating {SITE.gradDate}. I work
@@ -23,12 +30,6 @@ import { SITE } from '../consts';
         receiver for an ASIC design course. I also build STM32 systems and the software around
         them, from sensor processing to device protocols and application services.
       </p>
-      <p>
-        This first version is deliberately concise. The <a href="/projects/">project index</a>
-        carries the verified facts; longer articles will follow as I write the decisions,
-        failures, and lessons in my own voice.
-      </p>
-
       <h2>Reaching me</h2>
       <p>
         Email is best: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. I&#8217;m also on
