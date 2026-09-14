@@ -9,9 +9,8 @@ categories: ['Signal Processing', 'RTL & FPGA']
 dates: 'TODO: e.g. Jan 2026 – present'
 role: 'TODO: name the blocks that are yours. This is the one field an interviewer will probe.'
 figureNote: 'Figure: ring modulator, hardware vs Python reference'
-# Uncomment once scripts/make_figures.py has run:
-# figure: "/figures/harmonicore-ringmod.png"
-# figureAlt: "SystemVerilog ring modulator output against the Python reference, with per-sample error in LSBs"
+figure: "/figures/harmonicore-ringmod.png"
+figureAlt: "SystemVerilog ring modulator output against the Python reference, with per-sample error in LSBs"
 stats:
   - { label: 'Board', value: 'TODO', todo: true }
   - { label: 'Sample rate', value: 'TODO', todo: true }
