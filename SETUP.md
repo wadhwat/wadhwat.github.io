@@ -75,7 +75,7 @@ The ring modulator figure needs `v2-effects/ring_mod_output.csv`, which
 `make ring_mod_verify` produces. The pitch figure additionally needs
 `pip install librosa soundfile`.
 
-Then set `figure: "/figures/harmonicore-ringmod"` in the frontmatter.
+Then set `figure: "/figures/harmonicore-ringmod.png"` in the frontmatter.
 
 ## 6. Ship checks
 

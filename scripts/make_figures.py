@@ -6,12 +6,10 @@ The point of this script is that nothing on the site is drawn by hand. Every
 figure comes out of the same code and the same data that the project itself
 runs on, styled to match the site so the plots look like they belong.
 
-Each figure is written twice, once for each theme, as
-    <name>-light.png  and  <name>-dark.png
-because the site renders in whichever theme the viewer has set. In a project's
-markdown, reference the base name with no extension:
+Figures are written to public/figures/<name>.png and referenced from a
+project's markdown as:
 
-    figure: "/figures/harmonicore-ringmod"
+    figure: "/figures/harmonicore-ringmod.png"
 
 Usage
 -----
@@ -61,16 +59,6 @@ THEMES = {
         "accent": "#1E4D3C",
         "flag": "#8A6710",
     },
-    "dark": {
-        "paper": "#131311",
-        "card": "#1B1B18",
-        "ink": "#ECE8E1",
-        "ink2": "#A9A398",
-        "ink3": "#7C766B",
-        "rule": "#2E2E29",
-        "accent": "#7FBFA0",
-        "flag": "#D2A93F",
-    },
 }
 
 # Matches the 4:3 figure slot on the site at 2x for retina.
@@ -105,7 +93,7 @@ def style(ax, t, *, xlabel=None, ylabel=None, title=None):
 
 def save(fig, out_dir: Path, name: str, theme: str, t):
     out_dir.mkdir(parents=True, exist_ok=True)
-    path = out_dir / f"{name}-{theme}.png"
+    path = out_dir / f"{name}.png"
     fig.savefig(path, dpi=DPI, facecolor=t["paper"], bbox_inches="tight", pad_inches=0.25)
     plt.close(fig)
     print(f"  wrote {path}")
@@ -288,8 +276,8 @@ def main() -> int:
 
     print()
     if made:
-        print(f"{made} figure set(s) written. Reference them without the extension:")
-        print('  figure: "/figures/harmonicore-ringmod"')
+        print(f"{made} figure(s) written. Reference them as:")
+        print('  figure: "/figures/harmonicore-ringmod.png"')
     else:
         print("Nothing generated. See the skip reasons above.")
     return 0

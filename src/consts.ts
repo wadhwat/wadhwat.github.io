@@ -22,9 +22,9 @@ export const NAV = [
 
 // The vitals strip under the hero. Three real teams beats three broad fields.
 export const AFFILIATIONS = [
-  { label: 'Embedded Systems', value: 'Embedded Systems @ Purdue' },
-  { label: 'VIP', value: 'SoCET' },
-  { label: 'Purdue Space Program', value: 'Active Controls' },
+  { label: 'Audio DSP on FPGA', value: 'Embedded Systems @ Purdue' },
+  { label: 'RTL toward an ASIC', value: 'SoCET · VIP' },
+  { label: 'Engine control firmware', value: 'Purdue Space Program' },
 ] as const;
 
 // Bump this whenever you touch the Currently building section.
