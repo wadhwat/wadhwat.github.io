@@ -1,29 +1,38 @@
 ---
-title: STARS CDP
-hook: RTL for a digital FM receiver heading toward an ASIC. I own the digital plumbing and integration; my teammate owns the RF front end.
+title: STARS Digital FM Receiver
+hook: A wide-IF digital receiver architecture that takes a 38.4 MS/s real input down to a 48 kS/s audio stream.
 tier: current
 status: in-progress
 order: 30
-where: SoCET · VIP
-categories: ['RTL & FPGA', 'Signal Processing']
-dates: '2026 – present'
-role: 'RTL and digital integration'
-figureNote: 'Figure: receiver signal chain'
+where: STARS Chip Design
+categories: ['ASIC Design', 'Digital Signal Processing']
+dates: 'Sep 2026 – present'
+role: 'Working on digital architecture and integration; specific datapath block ownership is still being assigned.'
 stats:
   - { label: 'Target', value: 'ASIC' }
-  - { label: 'Domain', value: 'Digital FM RX' }
-  - { label: 'HDL', value: 'SystemVerilog' }
-  - { label: 'Team', value: 'JJTS' }
-links: []
+  - { label: 'ADC target', value: '12-bit real IF' }
+  - { label: 'Input rate', value: '38.4 MS/s' }
+  - { label: 'Audio rate', value: '48 kS/s' }
+results:
+  - { metric: 'Stage 1 output', value: '1.536 MS/s complex' }
+  - { metric: 'Channel rate', value: '384 kS/s complex' }
+  - { metric: 'Audio output', value: '48 kS/s' }
+  - { metric: 'Raw ADC payload', value: '460.8 Mb/s' }
 ---
 
-In progress, through Purdue's SoCET vertically integrated project. The system is a digital
-FM receiver intended for tapeout; I work on the RTL side, meaning the digital signal chain
-and the integration between blocks, while a teammate handles the RF front end.
+## Project brief
 
-<span class="todo">TODO: two or three sentences on what the digital chain actually does.
-Which stages (mixer, decimation, demodulation, audio path), what sample rates, and which
-blocks are yours specifically.</span>
+STARS is a digital FM receiver intended for an ASIC implementation. The current
+architecture starts with a 12-bit real-IF stream at 38.4 MS/s and targets stereo-compatible
+I2S audio at 48 kS/s.
 
-The reason this belongs next to HarmoniCore rather than repeating it: HarmoniCore targets an
-FPGA, where a bad decision costs a rebuild. This targets silicon, where it does not.
+## Planned signal chain
+
+- Programmable numerically controlled oscillator and complex mixer.
+- Multistage decimation using CIC and FIR filtering.
+- Channel selection, FM demodulation, and audio de-emphasis.
+- Final conversion to a 48 kS/s I2S stream.
+
+The figures above are design targets from the current rate plan. Implementation results,
+silicon measurements, and personal block ownership will be added as the project reaches
+those milestones.

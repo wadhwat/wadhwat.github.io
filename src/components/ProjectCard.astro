@@ -1,0 +1,29 @@
+---
+import Stats from './Stats.astro';
+import Figure from './Figure.astro';
+
+interface Props {
+  project: any;
+  featured?: boolean;
+}
+
+const { project, featured = false } = Astro.props as Props;
+const d = project.data;
+---
+<article class:list={['project-card', { featured, 'has-figure': !!d.figure }]}>
+  {d.figure && <Figure src={d.figure} alt={d.figureAlt} />}
+  <div class="project-card-copy">
+    <div class="project-card-meta">
+      <span class:list={['status', d.status]}>{d.status === 'in-progress' ? 'In progress' : 'Completed'}</span>
+      <span>{d.dates}</span>
+    </div>
+    <p class="project-card-where">{d.where ?? d.categories[0]}</p>
+    <h3><a href={`/projects/${project.id}/`}>{d.title}</a></h3>
+    <p class="project-card-hook">{d.hook}</p>
+    <div class="tag-list" aria-label="Technologies and focus areas">
+      {d.categories.map((category: string) => <span>{category}</span>)}
+    </div>
+    <Stats stats={d.stats} />
+    <a class="more" href={`/projects/${project.id}/`}>Project brief &#8594;</a>
+  </div>
+</article>

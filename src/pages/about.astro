@@ -4,7 +4,7 @@ import { SITE } from '../consts';
 ---
 <Base
   title="About"
-  description="How a CS start turned into Computer Engineering, and why the hardware–software seam is the interesting place to work."
+  description="Tejas Wadhwa is a Computer Engineering student at Purdue working across RTL, embedded systems, and hardware-aware software."
 >
   <section class="wrap page-head">
     <h1>About</h1>
@@ -13,37 +13,20 @@ import { SITE } from '../consts';
   <div class="wrap page-body">
     <article class="prose">
       <p>
-        I started at Purdue in Computer Science, moved into First-Year Engineering for the
-        hardware exposure, and landed in Computer Engineering, where the interesting problems
-        turned out to be. What I like is the seam: the point where an algorithm has to become
-        fixed-point arithmetic, become RTL, become a board that boots.
+        I&#8217;m a Computer Engineering student at Purdue, graduating {SITE.gradDate}. I work
+        across RTL and FPGA design, embedded firmware, board-level hardware, and software that
+        has to interact with physical systems.
       </p>
       <p>
-        Most of what I build lives on that seam. <a href="/projects/harmonicore/">HarmoniCore</a>
-        is an audio effects processor in SystemVerilog, where every effect had to survive the
-        trip from a Python reference model to fixed-point hardware that matches it within a
-        couple of least significant bits. The
-        <a href="/projects/socet-scoreboard/"> SoCET Scoreboard</a> is an FPGA design that also
-        had to become a physical board, which is a completely different set of failure modes.
-        <a href="/projects/stars-cdp/">STARS CDP</a> is RTL for a digital FM receiver heading
-        toward silicon, and on
-        <a href="/projects/psp-active-controls/"> Active Controls</a> I write firmware for an
-        engine-controller interface board, which is the same instincts applied to a system where
-        being wrong is expensive.
+        My projects include fixed-point audio effects on an Artix-7 FPGA, a basketball
+        scoreboard that reached a custom PCB, and the architecture of a wide-IF digital FM
+        receiver for an ASIC design course. I also build STM32 systems and the software around
+        them, from sensor processing to device protocols and application services.
       </p>
       <p>
-        I&#8217;m a sophomore graduating {SITE.gradDate}. Right now I&#8217;m most interested in
-        FPGA and ASIC design, embedded software, and the systems side of AI infrastructure;
-        roles where knowing both halves of the stack is the point rather than a curiosity.
-      </p>
-      <p>
-        <span class="todo">TODO: one or two sentences that are actually yours. What drew you to
-        the hardware side, or what you want to be doing in five years. This is the paragraph
-        that stops the page reading like a résumé.</span>
-      </p>
-      <p>
-        Outside that: climbing, hiking, baking, and an unreasonable amount of thought about
-        Commander deck construction, which is closer to constraint-solving than it sounds.
+        This first version is deliberately concise. The <a href="/projects/">project index</a>
+        carries the verified facts; longer articles will follow as I write the decisions,
+        failures, and lessons in my own voice.
       </p>
 
       <h2>Reaching me</h2>

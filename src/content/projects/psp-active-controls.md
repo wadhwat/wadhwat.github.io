@@ -1,31 +1,36 @@
 ---
-title: Zucrow interface board firmware
-hook: Firmware for the interface board on a liquid rocket engine controller — digital I/O plus an SPI DAC, on hardware that sits in a test cell.
+title: Zucrow Interface Firmware
+hook: Embedded interface firmware for Purdue Space Program's liquid-engine controller and ground-support electronics.
 tier: current
 status: in-progress
-order: 35
+order: 40
 where: Purdue Space Program
-categories: ['Embedded & Firmware']
-dates: '2026 – present'
-role: 'Interface board firmware, GNC embedded software'
-figureNote: 'Figure: interface board signal chain'
+categories: ['Embedded Firmware', 'Controls']
+dates: 'Sep 2026 – present'
+role: 'New contributor focused on the Zucrow interface firmware; personal implementation results are still in progress.'
 stats:
-  - { label: 'MCU', value: 'STM32' }
-  - { label: 'Interfaces', value: 'DI/DO · SPI' }
-  - { label: 'DAC', value: 'MCP48xx' }
-  - { label: 'System', value: 'TOAD' }
-links:
-  - { label: 'activecontrols on GitHub', href: 'https://github.com/activecontrols' }
+  - { label: 'Controller', value: 'TOAD' }
+  - { label: 'Signals', value: 'Digital I/O' }
+  - { label: 'Bus', value: 'SPI' }
+  - { label: 'DAC family', value: 'MCP48xx' }
+results:
+  - { metric: 'DAC channels', value: '2' }
+  - { metric: 'DAC resolution', value: '12-bit' }
+  - { metric: 'Driver SPI clock', value: '4 MHz' }
+  - { metric: 'SPI mode', value: 'Mode 0' }
 ---
 
-In progress, on Purdue Space Program's Active Controls team. I work on the embedded side of
-guidance, navigation and control; my piece is the firmware for the Zucrow interface board
-that sits between the TOAD engine controller and the hardware in the test cell.
+## Project brief
 
-That means digital inputs and outputs, and analog setpoints driven through an MCP48xx
-digital-to-analog converter over SPI. <span class="todo">TODO: two sentences on what the
-board actually controls, and what the failure modes are. This is the project where "being
-wrong is expensive" is literally true, which is worth saying plainly.</span>
+The interface sits between Purdue Space Program's TOAD engine controller and Zucrow
+ground systems. Existing firmware coordinates digital fault and synchronization signals
+and uses a dual-channel DAC to expose valve telemetry.
 
-<span class="todo">TODO: anything you can say about testing. How do you validate firmware
-for something you cannot iterate on casually?</span>
+## Current scope
+
+- Understand the controller-to-ground-system signal contract.
+- Work within the existing STM32 firmware and board interfaces.
+- Add and validate interface behavior as subsystem ownership is finalized.
+
+This page currently describes the assigned subsystem and facts verified from its source
+tree. Personal results will replace this status note as implementation and testing land.

@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import Stats from '../components/Stats.astro';
-import Figure from '../components/Figure.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import { SITE, AFFILIATIONS, CURRENT_UPDATED } from '../consts';
 import { getCollection } from 'astro:content';
 
@@ -16,8 +15,8 @@ const also = all.filter((p) => p.data.tier === 'also');
   <section class="wrap statement">
     <h1>I build systems that cross the hardware&#8211;software line.</h1>
     <p class="sub">
-      Real-time DSP on FPGAs, embedded firmware, PCB design, and the software that sits
-      on top; usually in the same project. Graduating {SITE.gradDate}.
+      FPGA DSP, embedded firmware, PCB design, and the software that connects them.
+      Computer Engineering at Purdue, graduating {SITE.gradDate}.
     </p>
 
     <dl class="affils">
@@ -42,16 +41,8 @@ const also = all.filter((p) => p.data.tier === 'also');
         <h2>Currently building</h2>
         <span class="meta">Updated {CURRENT_UPDATED}</span>
       </div>
-      <div class="current">
-        {current.map((p) => (
-          <article class="current-item">
-            <div class="where">{p.data.where ?? p.data.categories[0]}</div>
-            <div>
-              <h3><a href={`/projects/${p.id}/`}>{p.data.title}</a></h3>
-              <p>{p.data.hook}</p>
-            </div>
-          </article>
-        ))}
+      <div class="project-grid compact-grid">
+        {current.map((p) => <ProjectCard project={p} />)}
       </div>
     </section>
   )}
@@ -61,19 +52,8 @@ const also = all.filter((p) => p.data.tier === 'also');
       <h2>Selected work</h2>
       <a href="/projects/">All projects &#8594;</a>
     </div>
-    <div class="features">
-      {selected.map((p, i) => (
-        <article class="feature" data-flip={i % 2 === 1 ? 'true' : 'false'}>
-          <Figure src={p.data.figure} alt={p.data.figureAlt} note={p.data.figureNote} />
-          <div>
-            <p class="eyebrow">{p.data.categories.join(' · ')}</p>
-            <h3><a href={`/projects/${p.id}/`}>{p.data.title}</a></h3>
-            <p class="hook">{p.data.hook}</p>
-            <Stats stats={p.data.stats} />
-            <a class="more" href={`/projects/${p.id}/`}>Read the write-up &#8594;</a>
-          </div>
-        </article>
-      ))}
+    <div class="project-grid">
+      {selected.map((p) => <ProjectCard project={p} featured />)}
     </div>
   </section>
 
@@ -82,17 +62,8 @@ const also = all.filter((p) => p.data.tier === 'also');
       <div class="section-head">
         <h2>Also built</h2>
       </div>
-      <div class="compact">
-        {also.map((p) => (
-          <article class="compact-item">
-            <div class="where">{p.data.where ?? p.data.categories[0]}</div>
-            <div>
-              <h3><a href={`/projects/${p.id}/`}>{p.data.title}</a></h3>
-              <p>{p.data.hook}</p>
-            </div>
-            <span class="badge">{p.data.dates}</span>
-          </article>
-        ))}
+      <div class="project-grid compact-grid">
+        {also.map((p) => <ProjectCard project={p} />)}
       </div>
     </section>
   )}
@@ -105,14 +76,13 @@ const also = all.filter((p) => p.data.tier === 'also');
       <div class="stack-line">
         <div class="k">Hardware</div>
         <div class="v">
-          SystemVerilog<span class="sep">·</span>RTL design &amp; simulation<span class="sep">·</span>FPGA
-          bring-up<span class="sep">·</span><span class="todo">TODO: Vivado / Quartus</span><span class="sep">·</span>schematic
-          capture &amp; PCB layout in <span class="todo">TODO: EDA tool</span>
+          SystemVerilog<span class="sep">·</span>RTL design &amp; simulation<span class="sep">·</span>Xilinx
+          Vivado<span class="sep">·</span>FPGA bring-up<span class="sep">·</span>KiCad PCB design
         </div>
       </div>
       <div class="stack-line">
         <div class="k">Software</div>
-        <div class="v">C<span class="sep">·</span>Python<span class="sep">·</span>Java<span class="sep">·</span>CUDA</div>
+        <div class="v">C<span class="sep">·</span>Python<span class="sep">·</span>Java<span class="sep">·</span>Flask<span class="sep">·</span>FastAPI</div>
       </div>
       <div class="stack-line">
         <div class="k">Domains</div>

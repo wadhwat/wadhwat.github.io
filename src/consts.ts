@@ -12,7 +12,7 @@ export const SITE = {
   // Swap for the real domain when you buy one; also change `site:` in astro.config.mjs.
   domain: 'https://wadhwat.github.io',
 
-  gradDate: 'December 2028',
+  gradDate: 'May 2028',
 } as const;
 
 export const NAV = [
@@ -22,9 +22,9 @@ export const NAV = [
 
 // The vitals strip under the hero. Three real teams beats three broad fields.
 export const AFFILIATIONS = [
-  { label: 'Audio DSP on FPGA', value: 'Embedded Systems @ Purdue' },
-  { label: 'RTL toward an ASIC', value: 'SoCET · VIP' },
-  { label: 'Engine control firmware', value: 'Purdue Space Program' },
+  { label: 'RTL & FPGA', value: 'Audio DSP · Scoreboard' },
+  { label: 'ASIC design', value: 'Digital FM receiver · STARS' },
+  { label: 'Embedded systems', value: 'STM32 · Raspberry Pi · Sensors' },
 ] as const;
 
 // Bump this whenever you touch the Currently building section.

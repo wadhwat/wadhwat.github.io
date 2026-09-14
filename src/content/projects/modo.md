@@ -1,31 +1,41 @@
 ---
 title: MODO
-hook: An agent system I actually use every day. Tool routing, persistent state, and the unglamorous reliability work that separates something you depend on from something you demo once.
+hook: A Raspberry Pi 5 and STM32 embedded companion built around physical controls, a durable device protocol, and swappable AI services.
 tier: current
 status: in-progress
-order: 40
-where: Personal
-categories: ['AI Systems']
-dates: '2026 – present'
-role: 'Solo'
-figureNote: 'Figure: agent architecture'
+order: 50
+where: Personal project
+categories: ['Embedded Systems', 'AI Systems']
+dates: 'Jun 2026 – present'
+role: 'Own the system architecture, STM32 bring-up, device-interface specification, and planned Raspberry Pi application stack.'
 stats:
-  - { label: 'Runtime', value: 'TODO', todo: true }
-  - { label: 'Tools', value: 'TODO', todo: true }
-  - { label: 'State', value: 'TODO', todo: true }
-  - { label: 'Runs', value: 'daily' }
+  - { label: 'Host', value: 'Raspberry Pi 5' }
+  - { label: 'Controller', value: 'STM32F4' }
+  - { label: 'Controls', value: 'USB HID target' }
+  - { label: 'Device link', value: '115200 baud' }
+results:
+  - { metric: 'Firmware status', value: 'Board bring-up verified' }
+  - { metric: 'Protocol status', value: 'HID/UART interface specified' }
+  - { metric: 'Application status', value: 'Architecture in progress' }
+  - { metric: 'Service boundary', value: 'FastAPI planned' }
 links:
-  - { label: 'Source on GitHub', href: 'https://github.com/TODO' }
+  - { label: 'Source on GitHub', href: 'https://github.com/wadhwat/project-modo' }
 ---
 
-In progress. MODO is a personal agent system: <span class="todo">TODO: one sentence on what
-it concretely does for you, in the terms you would use to a friend.</span>
+## Project brief
 
-The thing that makes it worth writing up is that it is a daily driver rather than a demo,
-and that changes what you build. A demo can fail gracefully in front of an audience;
-something you rely on has to fail in ways you can diagnose at 11pm.
+MODO is an embedded companion built around a Raspberry Pi 5 and STM32 controller.
+Physical inputs and indicators belong on the microcontroller; higher-level speech, vision,
+agent, and storage services belong on the Pi behind replaceable interfaces.
 
-<span class="todo">TODO: what it is built on, what tools it can call, where state lives
-between runs, and what happens if it dies mid-task. Write it as an architecture project,
-not as "I used an LLM API"; the interesting content is routing, state, and failure
-handling.</span>
+## What is working
+
+- STM32 development-board bring-up and firmware flashing.
+- A documented USB HID and UART contract between the controller and host.
+- A repository structure that separates firmware, host services, interfaces, and logs.
+
+## Next
+
+The Pi application, camera path, speech services, and tool-running agent remain planned
+architecture. The next public milestone is an end-to-end physical control traveling through
+the device interface and producing a visible host action.
