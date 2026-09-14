@@ -9,6 +9,9 @@ categories: ['Signal Processing', 'RTL & FPGA']
 dates: 'TODO: e.g. Jan 2026 – present'
 role: 'TODO: name the blocks that are yours. This is the one field an interviewer will probe.'
 figureNote: 'Figure: ring modulator, hardware vs Python reference'
+# Uncomment once scripts/make_figures.py has run:
+# figure: "/figures/harmonicore-ringmod.png"
+# figureAlt: "SystemVerilog ring modulator output against the Python reference, with per-sample error in LSBs"
 stats:
   - { label: 'Board', value: 'TODO', todo: true }
   - { label: 'Sample rate', value: 'TODO', todo: true }
@@ -54,9 +57,11 @@ had to hit, or a slice budget? If so it belongs here.</span>
 
 ## Architecture
 
-<span class="todo">TODO: block diagram. Export to `public/figures/harmonicore-arch.svg` and
-reference it here. The generator script in the repo can produce the verification plot;
-the architecture diagram I can draw once you tell me the blocks.</span>
+<figure>
+  <img src="/figures/harmonicore-ringmod-arch.svg"
+       alt="Ring modulator datapath: a phase accumulator feeds a quarter-wave sine lookup table, whose output multiplies the incoming audio before an 18-bit slice is taken from the 36-bit product." />
+  <figcaption>The ring modulator datapath, end to end.</figcaption>
+</figure>
 
 The ring modulator is the clearest example of the pattern the rest follow. It computes
 `output = input × sin(2πft)` entirely in fixed point:
