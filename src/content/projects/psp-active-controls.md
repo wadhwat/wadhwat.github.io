@@ -7,7 +7,7 @@ order: 40
 where: Purdue Space Program
 categories: ['Embedded Firmware', 'Controls']
 dates: 'Sep 2026 – present'
-role: 'New contributor focused on the Zucrow interface firmware; personal implementation results are still in progress.'
+role: 'Developing the controller-to-ground-system interface firmware for the Zucrow test environment.'
 stats:
   - { label: 'Controller', value: 'TOAD' }
   - { label: 'Signals', value: 'Digital I/O' }
@@ -32,5 +32,5 @@ and uses a dual-channel DAC to expose valve telemetry.
 - Work within the existing STM32 firmware and board interfaces.
 - Add and validate interface behavior as subsystem ownership is finalized.
 
-This page currently describes the assigned subsystem and facts verified from its source
-tree. Personal results will replace this status note as implementation and testing land.
+Current work centers on making that boundary explicit, testable, and safe before it is
+exercised with the full ground system.

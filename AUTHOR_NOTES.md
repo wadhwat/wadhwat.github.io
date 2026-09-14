@@ -15,9 +15,12 @@ what went wrong, what you learned, and what the finished system felt like to use
 - The second generation includes ring modulation, distortion, chorus, and telephone voice.
 - Your commits cover distortion, ring modulation, an initial vibrato, interfaces and
   routing, testbenches, and first-generation control/datapath work.
-- Ring-modulator verification checked 114 samples across 11 sets. Maximum error was
-  1 LSB and RMS error was 0.234 LSB against a ±2 LSB test tolerance.
-- The current interface uses 24-bit Q1.23 samples. The sine LUT has 64 Q11 entries.
+- The current ring-modulator verification checks 104 vectors and reports 0 LSB error
+  against the bit-accurate Python model.
+- The datapath uses 24-bit Q1.23 samples, a 64-entry Q1.23 quarter-wave sine ROM,
+  quadrant mirroring/sign reconstruction, a 48-bit product, shift-by-23, and saturation.
+- HarmoniCore is a five-person team project. You were a major contributor and the current
+  resume supports five personally designed and verified RTL modules.
 
 ### Article angles
 
@@ -39,7 +42,7 @@ what went wrong, what you learned, and what the finished system felt like to use
 
 - C:\Users\tejas\Projects\harmonicore\README.md
 - C:\Users\tejas\Projects\harmonicore\v2-effects\VERIFICATION_SUMMARY.md
-- C:\Users\tejas\Projects\harmonicore\v2-effects\src
+- C:\Users\tejas\Projects\harmonicore\v2-effects\sv\src
 - C:\Users\tejas\Projects\harmonicore\v1-autotune
 
 ## SoCET Basketball Scoreboard
@@ -81,9 +84,11 @@ what went wrong, what you learned, and what the finished system felt like to use
 - Current rate plan: 12-bit real input at 38.4 MS/s and 48 kS/s audio output.
 - Planned intermediate rates are 1.536 MS/s complex and 384 kS/s complex.
 - The raw ADC payload at the design point is 460.8 Mb/s.
-- The planned chain includes a programmable NCO/mixer, CIC and FIR decimation, channel
+- The chain includes a programmable NCO/mixer, CIC and FIR decimation, channel
   selection, FM demodulation, de-emphasis, and I2S output.
-- This is architecture work; RTL results and silicon measurements do not exist yet.
+- You confirmed that the initial full-chain RTL is complete. The visible repository still
+  contains only the architecture material, so add the RTL source location or screenshots
+  when they are ready to be public.
 
 ### Article angles
 

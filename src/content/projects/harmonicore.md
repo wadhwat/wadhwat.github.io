@@ -7,19 +7,19 @@ order: 10
 where: Embedded Systems @ Purdue
 categories: ['Signal Processing', 'RTL & FPGA']
 dates: 'Sep 2025 – May 2026'
-role: 'Designed and verified the distortion, ring-modulator, vibrato, routing, and first-generation control/datapath RTL.'
+role: 'Major RTL contributor on a five-person team; designed and verified distortion, ring modulation, vibrato, routing, and first-generation control/datapath logic.'
 figure: '/figures/harmonicore-ringmod.png'
-figureAlt: 'SystemVerilog ring-modulator output against the Python reference, with per-sample error in LSBs'
+figureAlt: 'SystemVerilog ring-modulator output overlaid with the bit-accurate Python reference'
 stats:
-  - { label: 'FPGA', value: 'Artix-7' }
-  - { label: 'Audio', value: '24-bit Q1.23' }
-  - { label: 'Effects', value: '4' }
-  - { label: 'Test tolerance', value: '±2 LSB' }
+  - { label: 'FPGA', value: 'Artix-7 25T' }
+  - { label: 'Datapath', value: '24-bit Q1.23' }
+  - { label: 'My RTL', value: '5 modules' }
+  - { label: 'Verification', value: '104 vectors' }
 results:
-  - { metric: 'Ring-modulator samples checked', value: '114' }
-  - { metric: 'Maximum ring-modulator error', value: '1 LSB' }
-  - { metric: 'Ring-modulator RMS error', value: '0.234 LSB' }
-  - { metric: 'Sine lookup table', value: '64 entries, Q11' }
+  - { metric: 'Ring-modulator product', value: '24 × 24 → 48 bits' }
+  - { metric: 'Requantization', value: 'Arithmetic shift by 23' }
+  - { metric: 'Sine lookup table', value: '64-entry quarter wave, Q1.23' }
+  - { metric: 'Error vs bit-accurate reference', value: '0 LSB across 104 vectors' }
 links:
   - { label: 'HarmoniCore 2.0', href: 'https://github.com/embedded-purdue/HarmoniCore2.0' }
   - { label: 'v1 autotuner', href: 'https://github.com/embedded-purdue/HarmoniCore' }
@@ -30,6 +30,10 @@ links:
 HarmoniCore is an FPGA audio-effects pipeline. The second generation implements ring
 modulation, distortion, chorus, and a telephone-voice effect. Each block began with a
 Python reference and moved into synthesizable SystemVerilog.
+
+It was a five-person team project. I was a major RTL contributor, with work spanning
+individual effects, their testbenches, the routing layer, and first-generation control and
+datapath logic.
 
 The earlier version explored automatic pitch correction using YIN pitch detection and
 PSOLA pitch shifting. That work established the reference-model and RTL verification
@@ -46,13 +50,16 @@ workflow used in the second generation.
 
 ## Verification
 
-The ring modulator was compared sample by sample with its Python model across 11 test
-sets. All 114 checked samples stayed inside a ±2 LSB test tolerance; the measured maximum
-error was 1 LSB and RMS error was 0.234 LSB.
+The current ring-modulator simulation was compared sample by sample with a bit-accurate
+Python model. All 104 vectors matched exactly. The datapath uses a 64-entry Q1.23
+quarter-wave sine table, quadrant mirroring and sign reconstruction, a 48-bit product,
+an arithmetic shift by 23, and saturation back to 24 bits.
+
+![Ring-modulator datapath from phase accumulation and quarter-wave lookup through fixed-point multiplication and saturation](/figures/harmonicore-ringmod-arch.svg)
 
 ## Engineering details
 
-- Target family: Xilinx Artix-7.
+- Target: Xilinx Artix-7 25T.
 - Fixed-point formats are explicit at module boundaries.
 - Verification checks numerical agreement rather than relying only on listening tests.
 - The source repositories contain the reference models, RTL, testbenches, and FPGA build

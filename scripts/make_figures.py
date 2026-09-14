@@ -104,10 +104,11 @@ def save(fig, out_dir: Path, name: str, theme: str, t):
 # --------------------------------------------------------------------------
 
 def ringmod_figure(hc_root: Path, out_dir: Path) -> bool:
-    """Plot the SV ring modulator output against the Python reference.
+    """Plot the SystemVerilog output against the bit-accurate Python reference.
 
-    Reads v2-effects/ring_mod_output.csv, which the testbench writes. Run
-    `make ring_mod_verify` in v2-effects/sv first if it is missing or stale.
+    The reference follows verify_ring_mod.py: a 64-entry Q1.23 quarter-wave
+    table, quadrant mirroring/sign reconstruction, Q1.23 multiplication,
+    arithmetic shift by 23, and saturation to 24 bits.
     """
     csv_path = hc_root / "v2-effects" / "ring_mod_output.csv"
     if not csv_path.exists():
@@ -115,31 +116,48 @@ def ringmod_figure(hc_root: Path, out_dir: Path) -> bool:
         print("  (run `make ring_mod_verify` in v2-effects/sv to generate it)")
         return False
 
-    rows = []
     with csv_path.open(newline="") as f:
-        for row in csv.reader(f):
-            if not row or row[0].strip().startswith("#"):
-                continue
-            try:
-                rows.append([float(x) for x in row])
-            except ValueError:
-                continue  # header line
+        rows = list(csv.DictReader(f))
 
-    if not rows:
-        print(f"  skip ringmod: no numeric rows in {csv_path}")
+    required = {"sample_in", "phase", "output"}
+    if not rows or not required.issubset(rows[0]):
+        got = list(rows[0]) if rows else []
+        print(f"  skip ringmod: expected columns {sorted(required)}, got {got}")
         return False
 
-    data = np.array(rows)
-    n = np.arange(len(data))
+    audio_w = 24
+    frac_w = 23
+    phase_w = 18
 
-    # The testbench's column order can drift as the CSV evolves. Take the
-    # last two numeric columns as (expected, actual) unless told otherwise.
-    if data.shape[1] >= 3:
-        hw = data[:, -1]
-        ref = data[:, -2]
-    else:
-        print(f"  skip ringmod: expected >=3 columns, got {data.shape[1]}")
-        return False
+    def signed_nbit(value: int, width: int) -> int:
+        if value < 0:
+            return value
+        sign_bit = 1 << (width - 1)
+        return value - (1 << width) if value >= sign_bit else value
+
+    def q23_sine_from_phase(phase: int) -> int:
+        quadrant = (phase >> 16) & 0x3
+        lut_index = (phase >> 10) & 0x3f
+        if quadrant & 0x1:
+            lut_index = 0x3f - lut_index
+        theta = lut_index * (np.pi / 2) / 63
+        osc = int(np.round(np.sin(theta) * (1 << frac_w)))
+        osc = min(max(osc, -(1 << frac_w)), (1 << frac_w) - 1)
+        return -osc if quadrant & 0x2 else osc
+
+    samples = np.array(
+        [signed_nbit(int(r["sample_in"]), audio_w) for r in rows], dtype=np.int64
+    )
+    phases = np.array(
+        [int(r["phase"]) & ((1 << phase_w) - 1) for r in rows], dtype=np.int64
+    )
+    hw = np.array(
+        [signed_nbit(int(r["output"]), audio_w) for r in rows], dtype=np.int64
+    )
+    oscillators = np.array([q23_sine_from_phase(p) for p in phases], dtype=np.int64)
+    ref = (samples * oscillators) >> frac_w
+    ref = np.clip(ref, -(1 << frac_w), (1 << frac_w) - 1)
+    n = np.arange(len(rows))
 
     err = hw - ref
 
@@ -154,7 +172,7 @@ def ringmod_figure(hc_root: Path, out_dir: Path) -> bool:
                  alpha=0.55, label="Python reference")
         ax1.step(n, hw, where="mid", color=t["accent"], linewidth=1.3,
                  label="SystemVerilog")
-        style(ax1, t, ylabel="output (LSB)",
+        style(ax1, t, ylabel="output (Q1.23)",
               title="Ring modulator: hardware vs reference")
         leg = ax1.legend(loc="upper right", frameon=False, fontsize=8)
         for text in leg.get_texts():
@@ -175,6 +193,7 @@ def ringmod_figure(hc_root: Path, out_dir: Path) -> bool:
         )
 
         save(fig, out_dir, "harmonicore-ringmod", theme, t)
+        print(f"  {len(rows)} vectors · max |err| {peak} LSB · rms {rms:.3f} LSB")
     return True
 
 

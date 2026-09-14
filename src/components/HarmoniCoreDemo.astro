@@ -1,0 +1,186 @@
+<section class="wrap hc-demo" aria-labelledby="hc-demo-title">
+  <div class="hc-demo-copy">
+    <p class="eyebrow">HarmoniCore · interactive model</p>
+    <h2 id="hc-demo-title">What does a ring modulator do?</h2>
+    <p>
+      It multiplies each audio sample by a generated oscillator. Change the carrier and
+      watch a simple input waveform turn into the metallic output implemented in fixed-point
+      RTL.
+    </p>
+    <div class="hc-control">
+      <label for="carrier">Carrier rate <output id="carrier-value">6.0×</output></label>
+      <input id="carrier" type="range" min="1" max="14" value="6" step="0.5" />
+    </div>
+    <button class="hc-pause" id="hc-pause" type="button">Pause motion</button>
+    <a class="more" href="/projects/harmonicore/">See the RTL and verification &#8594;</a>
+  </div>
+
+  <div class="hc-scope">
+    <div class="hc-trace">
+      <span>INPUT</span>
+      <svg viewBox="0 0 720 120" role="img" aria-label="Input audio waveform">
+        <path class="grid" d="M0 30H720M0 60H720M0 90H720M120 0V120M240 0V120M360 0V120M480 0V120M600 0V120" />
+        <path id="hc-input-wave" class="wave input-wave" d="" />
+      </svg>
+    </div>
+    <div class="hc-trace">
+      <span>Q1.23 OUTPUT</span>
+      <svg viewBox="0 0 720 120" role="img" aria-label="Ring-modulated output waveform">
+        <path class="grid" d="M0 30H720M0 60H720M0 90H720M120 0V120M240 0V120M360 0V120M480 0V120M600 0V120" />
+        <path id="hc-output-wave" class="wave output-wave" d="" />
+      </svg>
+    </div>
+    <p class="hc-caption">
+      Browser model of the RTL arithmetic · 24-bit Q1.23 · 64-entry quarter-wave sine ROM
+    </p>
+  </div>
+</section>
+
+<script>
+  const carrier = document.querySelector('#carrier');
+  const carrierValue = document.querySelector('#carrier-value');
+  const inputPath = document.querySelector('#hc-input-wave');
+  const outputPath = document.querySelector('#hc-output-wave');
+  const pause = document.querySelector('#hc-pause');
+
+  if (
+    carrier instanceof HTMLInputElement &&
+    carrierValue instanceof HTMLOutputElement &&
+    inputPath instanceof SVGPathElement &&
+    outputPath instanceof SVGPathElement &&
+    pause instanceof HTMLButtonElement
+  ) {
+    let running = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let phase = 0;
+    let frame = 0;
+
+    const q23 = (value) => {
+      const max = 1 - 2 ** -23;
+      const clipped = Math.max(-1, Math.min(max, value));
+      return Math.round(clipped * 2 ** 23) / 2 ** 23;
+    };
+
+    const q23Sine = (turns) => {
+      const wrapped = ((turns % 1) + 1) % 1;
+      const phaseWord = Math.floor(wrapped * 2 ** 18);
+      const quadrant = (phaseWord >> 16) & 0x3;
+      let address = (phaseWord >> 10) & 0x3f;
+      if (quadrant & 0x1) address = 0x3f - address;
+      let oscillator = q23(Math.sin((address * Math.PI / 2) / 63));
+      if (quadrant & 0x2) oscillator = -oscillator;
+      return oscillator;
+    };
+
+    const pathFor = (fn) => {
+      const points = 240;
+      let d = '';
+      for (let i = 0; i <= points; i += 1) {
+        const x = (i / points) * 720;
+        const y = 60 - fn(i / points) * 46;
+        d += `${i === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`;
+      }
+      return d;
+    };
+
+    const draw = () => {
+      const rate = Number(carrier.value);
+      carrierValue.value = `${rate.toFixed(1)}×`;
+      const source = (t) =>
+        0.62 * Math.sin(2 * Math.PI * (2 * t + phase)) +
+        0.22 * Math.sin(2 * Math.PI * (4 * t + phase * 0.7)) +
+        0.08 * Math.sin(2 * Math.PI * (7 * t));
+      inputPath.setAttribute('d', pathFor(source));
+      outputPath.setAttribute(
+        'd',
+        pathFor((t) => q23(source(t) * q23Sine(rate * t + phase)))
+      );
+    };
+
+    const tick = () => {
+      if (running) phase = (phase + 0.0015) % 1;
+      if (running || frame === 0) draw();
+      frame = window.requestAnimationFrame(tick);
+    };
+
+    carrier.addEventListener('input', draw);
+    pause.addEventListener('click', () => {
+      running = !running;
+      pause.textContent = running ? 'Pause motion' : 'Resume motion';
+      pause.setAttribute('aria-pressed', String(!running));
+      draw();
+    });
+    pause.setAttribute('aria-pressed', String(!running));
+    if (!running) pause.textContent = 'Resume motion';
+    tick();
+  }
+</script>
+
+<style>
+  .hc-demo {
+    display: grid;
+    grid-template-columns: minmax(240px, .72fr) minmax(0, 1.28fr);
+    gap: clamp(28px, 5vw, 68px);
+    padding-block: 42px;
+    border-top: 1px solid var(--rule-2);
+    border-bottom: 1px solid var(--rule-2);
+  }
+  .hc-demo-copy h2 {
+    font-family: var(--f-display);
+    font-size: clamp(31px, 4vw, 47px);
+    font-weight: 400;
+    line-height: 1.02;
+  }
+  .hc-demo-copy > p:not(.eyebrow) {
+    color: var(--ink-2);
+    margin: 15px 0 20px;
+    font-size: var(--fs-sm);
+  }
+  .hc-control {
+    display: grid;
+    gap: 9px;
+    margin: 20px 0 14px;
+  }
+  .hc-control label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .hc-control output { color: var(--accent-ink); }
+  .hc-control input { width: 100%; accent-color: var(--accent); }
+  .hc-pause {
+    border: 1px solid var(--rule-2);
+    background: transparent;
+    color: var(--ink-2);
+    padding: 7px 10px;
+    font: 11px var(--f-mono);
+    cursor: pointer;
+    margin-right: 13px;
+  }
+  .hc-pause:hover { border-color: var(--accent); color: var(--accent-ink); }
+  .hc-demo .more { display: inline-block; font-family: var(--f-mono); font-size: 11px; }
+  .hc-scope {
+    min-width: 0;
+    border: 1px solid var(--rule-2);
+    background: var(--card);
+    padding: 16px 18px 13px;
+  }
+  .hc-trace + .hc-trace { margin-top: 8px; }
+  .hc-trace span, .hc-caption {
+    font-family: var(--f-mono);
+    color: var(--ink-3);
+    font-size: 9px;
+    letter-spacing: .1em;
+  }
+  .hc-trace svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .grid { fill: none; stroke: var(--rule); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .wave { fill: none; stroke-width: 2; vector-effect: non-scaling-stroke; }
+  .input-wave { stroke: var(--ink-3); }
+  .output-wave { stroke: var(--accent); }
+  .hc-caption { margin: 7px 0 0; line-height: 1.5; }
+  @media (max-width: 760px) {
+    .hc-demo { grid-template-columns: 1fr; }
+  }
+</style>

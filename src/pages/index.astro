@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import HarmoniCoreDemo from '../components/HarmoniCoreDemo.astro';
 import { SITE, AFFILIATIONS, CURRENT_UPDATED } from '../consts';
 import { getCollection } from 'astro:content';
 
@@ -34,6 +35,8 @@ const also = all.filter((p) => p.data.tier === 'also');
       <a href={SITE.linkedin}>LinkedIn</a>
     </div>
   </section>
+
+  <HarmoniCoreDemo />
 
   {current.length > 0 && (
     <section class="wrap section">
